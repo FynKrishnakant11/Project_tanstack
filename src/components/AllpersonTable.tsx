@@ -1,49 +1,50 @@
-import AllPersonHook from "../hooks/AllPersonHook";
+import useAllPersonHook from "../hooks/useAllPerson";
 import { useState } from "react";
 import {
-  createColumnHelper,
   useReactTable,
   getCoreRowModel,
   flexRender,
   getFilteredRowModel,
   getSortedRowModel,
   getPaginationRowModel,
+  ColumnDef,
 } from "@tanstack/react-table";
-import type { IPersonDetails } from "../types/IAllPersonTypes";
-import type { PaginationState } from "@tanstack/react-table";
+import { IPersonDetails } from "../types/IAllPersonTypes";
+import { PaginationState, SortingState } from "@tanstack/react-table";
 
-const columnHelper = createColumnHelper<IPersonDetails>();
-
-const columns = [
-  columnHelper.accessor((row) => `${row.firstname} ${row.lastname}`, {
-    id: "name",
+const columns: ColumnDef<IPersonDetails>[] = [
+  {
+    accessorFn: (row) => `${row.firstname} ${row.lastname}`,
     header: "Name",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("email", {
+  },
+  {
+    accessorKey: "email",
     header: "Email",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("gender", {
+  },
+  {
+    accessorKey: "gender",
     header: "Gender",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("image", {
+  },
+  {
+    accessorKey: "image",
     header: "Image",
     cell: (info) => {
-      const ImgUrl = info.getValue();
-      return <img src={ImgUrl} alt="Profile" />;
+      {
+        console.log("This is Info :", info);
+      }
+      {
+        console.log("This is getValue of info :", info.getValue());
+      }
+
+      return <img src={info.getValue() as string} alt="Profile" />;
     },
-  }),
+  },
 ];
 
 const AllpersonTable = () => {
-  //For controlled global & column filter
-  // const [globalFilter, setGlobalFilter] = useState("");
-  // const [columnFilters, setColumnFilters] = useState([{});
   const [sorting, setSorting] = useState<SortingState>([]);
   const { allPersonDetails, allPersonIsLoading, allPersonIsError } =
-    AllPersonHook();
+    useAllPersonHook();
   const allPersonDetailsData = allPersonDetails?.data ?? [];
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -56,11 +57,7 @@ const AllpersonTable = () => {
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    // onColumnFiltersChange: setColumnFilters,
-    // onGlobalFilterChange: setGlobalFilter,
     state: {
-      // globalFilter,
-      // columnFilters,
       sorting,
       pagination,
     },
@@ -77,7 +74,7 @@ const AllpersonTable = () => {
             className="border-1 border-white rounded-2xl ml-2"
             value={table.getState().globalFilter ?? ""}
             onChange={(e) => {
-              table.setGlobalFilter(String(e.target.value));
+              table.setGlobalFilter(e.target.value);
             }}
           />
           <h1 className="">Persons Dump</h1>
@@ -86,12 +83,11 @@ const AllpersonTable = () => {
           {allPersonIsLoading && <h1>Loading.........</h1>}
           <table className="m-auto w-[80%]">
             <thead>
-              {table.getHeaderGroups().map((HeaderGroup) => (
-                <tr key={HeaderGroup.id}>
-                  {HeaderGroup.headers.map((header) => (
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      // get togglesorting handler sorts the column
                       className="p-[10px] border-4 border-white rounded-t-4xl"
                       title={
                         header.column.getCanSort()
@@ -101,7 +97,6 @@ const AllpersonTable = () => {
                             ? "Sort descending"
                             : "Clear sort"
                           : undefined
-                        //  header.column.getCanSort()?header.column.getNextSortingOrder()==="asc"?"Sort Ascending":header.column.getNextSortingOrder()==="desc"?"Sort Descending":"clear Sort":undefined
                       }
                     >
                       {flexRender(
@@ -118,18 +113,11 @@ const AllpersonTable = () => {
                           false: <span className="text-xs">---</span>,
                         }[header.column.getIsSorted() as string] ?? null}
                       </button>
-                      {console.log("get can filter status :",header.column)}
                       {header.column.getCanFilter() && (
                         <input
-                          value={
-                            (header.column.getFilterValue() ?? "") as
-                              | string
-                              | number
-                          }
+                          value={header.column.getFilterValue() as string}
                           onChange={(e) => {
-                            header.column.setFilterValue(
-                              e.target.value === "" ? undefined : e.target.value
-                            );
+                            header.column.setFilterValue(e.target.value);
                           }}
                           placeholder={`Search ${String(
                             header.column.columnDef.header
@@ -191,8 +179,6 @@ const AllpersonTable = () => {
           <span className="flex items-center gap-1">
             <div>Page</div>
             <strong>
-              {console.log("getstate of the table :",table.getState())}
-              {console.log("pagination of the tabel :",table.getState().pagination)}
               {table.getState().pagination.pageIndex + 1} of{" "}
               {table.getPageCount().toLocaleString()}
             </strong>

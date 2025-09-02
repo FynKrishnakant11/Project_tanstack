@@ -1,5 +1,3 @@
-import React from "react";
-
 const FallBackUi = () => {
   return (
     <div className="">
@@ -7,5 +5,4 @@ const FallBackUi = () => {
     </div>
   );
 };
-
 export default FallBackUi;
