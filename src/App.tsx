@@ -1,15 +1,11 @@
-import { lazy,Suspense } from "react";
-const AllPersonTable = lazy(() => import("./components/AllpersonTable"));
-import FallBackUi from "./shared/FallBackUi";
+import { lazy, Suspense } from "react";
+const AllPersonTable = lazy(() => import("./components/AllPersonTable"));
+import FallBackUi from "./components/shared/FallBackUi";
 function App() {
   return (
-    <>
-      <div className="">
-        <Suspense fallback={<FallBackUi/>}>
-          <AllPersonTable />
-        </Suspense>
-      </div>
-    </>
+    <Suspense fallback={<FallBackUi />}>
+      <AllPersonTable />
+    </Suspense>
   );
 }
 export default App;

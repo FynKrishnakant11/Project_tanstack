@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllPersonService } from "../services/allPersonServices";
 
-const AllPersonHook = () => {
+const useAllPerson= () => {
   const query = useQuery({
     queryKey: ["allPersonDetails"],
     queryFn: fetchAllPersonService,
@@ -12,5 +12,4 @@ const AllPersonHook = () => {
     allPersonIsError: query.isError,
   };
 };
-
-export default AllPersonHook;
+export default useAllPerson;
