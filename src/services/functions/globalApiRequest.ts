@@ -1,10 +1,9 @@
-import {  apiRequest } from "../config/axios.config";
-
-export const fetchAllPersonService = async () => {
+import { apiRequest } from "../configs/axios.config";
+const handleGlobalGetRequestQuery = async () => {
   try {
     const res = await apiRequest.get("/");
     if (res) {
-      return res.data;
+      return res;
     } else {
       console.log("No data found");
       return;
@@ -13,3 +12,4 @@ export const fetchAllPersonService = async () => {
     console.log("Error fetching details : ", error);
   }
 };
+export {handleGlobalGetRequestQuery};

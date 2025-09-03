@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchAllPersonService } from "../services/allPersonServices";
-
+import { handleGlobalGetRequestQuery } from "../functions/globalApiRequest";
 const useAllPerson= () => {
   const query = useQuery({
     queryKey: ["allPersonDetails"],
-    queryFn: fetchAllPersonService,
+    queryFn: handleGlobalGetRequestQuery,
   });
   return {
     allPersonDetails: query.data,

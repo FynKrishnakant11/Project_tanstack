@@ -1,6 +1,6 @@
 interface IPersonDetails {
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   gender: string;
   image: string;
